@@ -79,3 +79,30 @@ saquear pirata formaDeSaqueo tesoro = pirata {botin = (botin pirata) ++ (filter 
 
 -- *Main> saquear jackSparrow (saquearFormaCompleja ("Sombrero", 10)) ("Oro", 100)
 -- Pirata {nombre = "Jack Sparrow", botin = [("Brujula que apunta",10000),("Frasco de arena",0)]}
+
+--NAVEGANDO LOS SIETE MARES
+data Barco = Barco {
+    nombreBarco :: Nombre,
+    tripulacion :: [Pirata], 
+    formaDeSaqueo :: FormaDeSaqueo
+} deriving (Show)
+
+data Isla = Isla {
+    nombreIsla :: Nombre,
+    tesoro :: Tesoros
+} deriving (Show)
+
+data Ciudad = Ciudad {
+    nombreCiudad :: Nombre,
+    tesoros :: [Tesoros]
+} deriving (Show)
+
+--Algunos Barcos, Piratas Nuevos e Islas
+perlaNegra = Barco "Perla Negra" [jackSparrow, anneBonny] saquearConCorazon
+holandesErrante = Barco "Holandés Errante" [davidJones] saquearConCorazon
+
+elizabethSwann = Pirata "Elizabeth Swann" [("Moneda del cofre muerto", 100), ("Espada de hierro", 50)]
+willTurner = Pirata "Will Turner" [("Cuchillo", 5)]
+
+islaTortuga = Isla "Isla Tortuga" ("Frasco de arena", 1)
+islaDelRon = Isla "Isla del Ron" ("Botella de ron", 25)
