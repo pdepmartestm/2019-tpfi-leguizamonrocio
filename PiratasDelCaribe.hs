@@ -1,10 +1,10 @@
-<<<<<<< HEAD
 import Text.Show.Functions 
 import Data.List 
 import Data.Maybe 
 
 type Nombre = String
 type Tesoros = (String, Int)
+type FormaDeSaqueo = Tesoros -> Bool
 
 data Pirata = Pirata {
     nombre :: Nombre, 
@@ -16,7 +16,7 @@ jackSparrow = Pirata "Jack Sparrow" [("Brujula que apunta", 10000), ("Frasco de 
 davidJones = Pirata "David Jones" [("Cajita musical", 1)]
 anneBonny = Pirata "Anne Bonny" [("Doblones", 100), ("Frasco de arena", 1)]
 
---Tesoros Piratas
+--TESOROS PIRATAS
 cantidadTesoros :: Pirata -> Int 
 cantidadTesoros = length.botin
 
@@ -52,55 +52,30 @@ sinTesorosValiosos botin = filter (not.tesoroValioso) botin
 
 tesoroValioso :: Tesoros -> Bool
 tesoroValioso tesoro = (snd tesoro) > 100
-=======
-import Text.Show.Functions 
-import Data.List 
-import Data.Maybe 
 
-type Nombre = String
-type Tesoros = (String, Int)
+--TEMPORADA DE SAQUEOS
+saquearTesorosValiosos :: Tesoros -> Bool
+saquearTesorosValiosos tesoro = tesoroValioso tesoro 
 
-data Pirata = Pirata {
-    nombre :: Nombre, 
-    botin :: [Tesoros]
-} deriving (Show, Eq)
+saquearObjetoEspecifico :: Tesoros -> Tesoros -> Bool
+saquearObjetoEspecifico objeto tesoro = objeto == tesoro
 
---Algunos piratas
-jackSparrow = Pirata "Jack Sparrow" [("Brujula que apunta", 10000), ("Frasco de arena", 0)]
-davidJones = Pirata "David Jones" [("Cajita musical", 1)]
-anneBonny = Pirata "Anne Bonny" [("Doblones", 100), ("Frasco de arena", 1)]
+saquearConCorazon :: Tesoros -> Bool 
+saquearConCorazon tesoro = False
 
---Tesoros piratas
-cantidadTesoros :: Pirata -> Int 
-cantidadTesoros = length.botin
+saquearFormaCompleja :: Tesoros -> Tesoros -> Bool
+saquearFormaCompleja objeto tesoro = saquearObjetoEspecifico objeto tesoro || saquearTesorosValiosos tesoro
 
-sumarValorTotal :: Pirata -> Int
-sumarValorTotal = sum.map snd.botin
+saquear :: Pirata -> FormaDeSaqueo -> Tesoros -> Pirata
+saquear pirata formaDeSaqueo tesoro = pirata {botin = (botin pirata) ++ (filter formaDeSaqueo [tesoro])}
 
-pirataAfortunado :: Pirata -> Bool
-pirataAfortunado pirata = sumarValorTotal(pirata) >= 10000
+--Probando diferentes combinaciones
 
-obtenerNombres :: Pirata -> [String]
-obtenerNombres = map fst.botin
+-- *Main> saquear anneBonny (saquearObjetoEspecifico ("Oro", 100)) ("Oro", 100)
+-- Pirata {nombre = "Anne Bonny", botin = [("Doblones",100),("Frasco de arena",1),("Oro",100)]}
 
-mismoTesoro :: Pirata -> Pirata -> [String]
-mismoTesoro pirata1 pirata2 = intersect (obtenerNombres pirata1) (obtenerNombres pirata2)
+-- *Main> saquear davidJones (saquearConCorazon) ("Oro", 100)
+-- Pirata {nombre = "David Jones", botin = [("Cajita musical",1)]}
 
-obtenerValores :: Pirata -> [Int]
-obtenerValores = map snd.botin
-
-tesoroMasValioso :: Pirata -> Int 
-tesoroMasValioso = maximum.obtenerValores
-
-nuevoBotin unBotin unPirata = unPirata {
-    botin = unBotin
-}
-
-nuevosTesoros unTesoro unPirata = nuevoBotin (unTesoro : botin unPirata)
-
-nuevoTesoro = nuevosTesoros
-
-pierdeTesorosValiosos :: Pirata -> [Int]
-pierdeTesorosValiosos pirata = filter (>100) (obtenerValores(pirata))
-
->>>>>>> 4d9fe909307623291465263d11db1ce73d7047e7
+-- *Main> saquear jackSparrow (saquearFormaCompleja ("Sombrero", 10)) ("Oro", 100)
+-- Pirata {nombre = "Jack Sparrow", botin = [("Brujula que apunta",10000),("Frasco de arena",0)]}
